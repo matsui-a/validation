@@ -81,3 +81,19 @@ AppView.prototype.initialize = function(el) {
 
   this.model = new AppModel(obj);
 };
+
+//keyupイベントのイベントハンドラにメソッドを登録
+AppView.prototype.handleEvents = function() {
+  var self = this;
+
+  //onKeyupメソッドを実装
+  this.$el.on("keyup", function(e) {
+    self.onKeyup(e);
+  });
+};
+
+//this.modelのsetメソッドを使って、input値にmodelをセット
+AppView.prototype.onKeyup = function(e) {
+  var $target = $(e.currentTarget);
+  this.model.set($target.val());
+}
