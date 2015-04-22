@@ -1,6 +1,12 @@
 //Modelのコンストラクタを作成
 function AppModel(attrs) {
   this.val = "";
+  //validation Patternを設定
+  this.attrs = {
+    required: "",
+    maxlength: 8,
+    minlength: 4
+  };
   //オブザーバーの機能追加
   this.listeners = {
     valid: [],
@@ -26,6 +32,22 @@ AppModel.prototype.set = function(val) {
   this.validate();
 };
 
+//this.valの値が正しいかチェック
+AppModel.prototype.validate = function() {
+  var val;
+  //エラーー保存用
+  this.errors = [];
+
+  for (var key in this.attrs) {
+    val = this.attrs[key];
+    //メソッドを取り出しvalの引数を渡して実行
+    if (!this[key](val)) this.errors.push(key);
+  }
+
+  //this.errorsが空であればvalidイベントを通知、からでなかればinvalidイベントを通知
+  this.trigger(!this.errors.length ? "valid" : "invalid");
+};
+
 //値が空かどうかを判定
 AppModel.prototype.required = function(num) {
   return this.val !== "";
@@ -39,4 +61,23 @@ AppModel.prototype.maxlength = function(num) {
 //値の文字数が引数num以下かどうかを判定
 AppModel.prototype.minlength = function(num) {
   return num <= this.val.length;
+};
+
+//ModelをもとにViewを作成
+function AppView(el) {
+  this.initialize(el);
+  this.handleEvents();
+}
+
+AppView.prototype.initialize = function(el) {
+  this.$el = $(el);
+
+  var obj = this.$el.data;
+
+  //required属性があればobjに{required:''}をマージ
+  if (this.$el.prop("required")) {
+    obj["required"] = "";
+  }
+
+  this.model = new AppModel(obj);
 };
