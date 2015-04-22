@@ -25,3 +25,18 @@ AppModel.prototype.set = function(val) {
   this.val = val;
   this.validate();
 };
+
+//値が空かどうかを判定
+AppModel.prototype.required = function(num) {
+  return this.val !== "";
+};
+
+//値の文字数が引数num以上かどうかを判定
+AppModel.prototype.maxlength = function(num) {
+  return num >= this.val.length;
+};
+
+//値の文字数が引数num以下かどうかを判定
+AppModel.prototype.minlength = function(num) {
+  return num <= this.val.length;
+};
